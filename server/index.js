@@ -50,12 +50,19 @@ const storage = multer.diskStorage({
 const sequelize = new Sequelize({
   dialect: 'postgres',
   host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'shri_ayu_wellness',
-  logging: false
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,  // Isse SSL cert validation bypass hota hai, Render ke liye theek hai
+    }
+  }
 });
+
 
 // Initialize Razorpay (Test mode)
 const razorpay = new Razorpay({

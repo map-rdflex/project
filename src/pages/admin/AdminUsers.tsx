@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { API_BASE_URL } from '../api'; // make sure the path is correct
+import { API_BASE_URL } from '../../api'; // adjust path based on your file location
+
 
 
 interface User {

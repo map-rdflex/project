@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState('');
@@ -6,24 +6,8 @@ const AdminAddProduct: React.FC = () => {
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
   const [inStock, setInStock] = useState<boolean>(true);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [image, setImage] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedImage(file);
-
-      // Create a preview URL for the image
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,45 +22,36 @@ const AdminAddProduct: React.FC = () => {
       return;
     }
 
-    // Using FormData to handle file upload
-    const formData = new FormData();
-    formData.append('name', productName);
-    formData.append('price', price.toString());
-    formData.append('category', category);
-    formData.append('brand', brand);
-    formData.append('inStock', String(inStock));
-
-    // Append the image file if one was selected
-    if (selectedImage) {
-      formData.append('productImage', selectedImage);
-    }
+    const newProduct = {
+      name: productName,
+      price,
+      category,
+      brand,
+      inStock,
+      image
+    };
 
     try {
       const response = await fetch('http://localhost:5000/api/products', {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,  // Pass the token here
-          // Don't set Content-Type when using FormData - the browser will set it correctly with boundary
         },
         credentials: 'include',
-        body: formData,
+        body: JSON.stringify(newProduct),
       });
 
       if (response.ok) {
         alert('Product added successfully!');
-        // Reset the form
         setProductName('');
         setPrice(0);
         setCategory('');
         setBrand('');
         setInStock(true);
-        setSelectedImage(null);
-        setPreviewImage(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+        setImage('');
       } else {
-        const errorResponse = await response.json();
+        const errorResponse = await response.json(); // Assuming the backend returns an error message
         console.error('Error adding product:', errorResponse);
         alert(`Failed to add product: ${errorResponse.message || 'Unknown error'}`);
       }
@@ -84,7 +59,7 @@ const AdminAddProduct: React.FC = () => {
       console.error('Error adding product:', error);
       const message =
         error?.message ||
-        error?.response?.data?.message ||
+        error?.response?.data?.message || // axios-like response
         'Unknown error';
       alert(`An error occurred: ${message}`);
     } finally {
@@ -154,30 +129,13 @@ const AdminAddProduct: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Product Image</label>
-          <div className="mt-1 flex items-center">
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              onChange={handleImageChange}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-md file:border-0
-                file:text-sm file:font-semibold
-                file:bg-primary-50 file:text-primary-700
-                hover:file:bg-primary-100"
-            />
-          </div>
-          {previewImage && (
-            <div className="mt-2">
-              <img
-                src={previewImage}
-                alt="Product preview"
-                className="h-40 object-contain border rounded-md"
-              />
-            </div>
-          )}
+          <label className="block text-sm font-medium text-gray-700">Image URL</label>
+          <input
+            type="url"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+          />
         </div>
 
         <div className="flex justify-end">

@@ -5,48 +5,48 @@ import ProductCard from '../components/products/ProductCard';
 import FeaturedBrands from '../components/home/FeaturedBrands';
 
 // Mock data for featured products
-const featuredProducts = [
-  {
-    id: 1,
-    name: 'Chyawanprash',
-    price: 350,
-    image: 'https://t4.ftcdn.net/jpg/05/48/31/71/240_F_548317177_9PvyTJZeG5h2FlEfPiSPr1trf9Nl8Cxa.jpg',
-    brand: 'Dabur',
-    description: 'Ayurvedic health supplement to boost immunity and strength.',
-    rating: 4.5,
-    inStock: true
-  },
-  {
-    id: 2,
-    name: 'Sudarshan Ghanvati',
-    price: 280,
-    image: 'https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=600',
-    brand: 'Zandu',
-    description: 'Helps reduce stress and anxiety while improving concentration.',
-    rating: 4.3,
-    inStock: true
-  },
-  {
-    id: 3,
-    name: 'Gioly Powder',
-    price: 220,
-    image: 'https://images.pexels.com/photos/6942823/pexels-photo-6942823.jpeg?auto=compress&cs=tinysrgb&w=600',
-    brand: 'Punarvasu',
-    description: 'Supports digestive health and detoxification.',
-    rating: 4.7,
-    inStock: true
-  },
-  {
-    id: 4,
-    name: 'Shankhpushpi Syrup',
-    price: 180,
-    image: 'https://images.pexels.com/photos/8989497/pexels-photo-8989497.jpeg?auto=compress&cs=tinysrgb&w=600',
-    brand: 'Unjha',
-    description: 'Enhances memory and cognitive functions.',
-    rating: 4.2,
-    inStock: true
-  }
-];
+// const featuredProducts = [
+//   {
+//     id: 1,
+//     name: 'Chyawanprash',
+//     price: 350,
+//     image: 'https://t4.ftcdn.net/jpg/05/48/31/71/240_F_548317177_9PvyTJZeG5h2FlEfPiSPr1trf9Nl8Cxa.jpg',
+//     brand: 'Dabur',
+//     description: 'Ayurvedic health supplement to boost immunity and strength.',
+//     rating: 4.5,
+//     inStock: true
+//   },
+//   {
+//     id: 2,
+//     name: 'Sudarshan Ghanvati',
+//     price: 280,
+//     image: 'https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=600',
+//     brand: 'Zandu',
+//     description: 'Helps reduce stress and anxiety while improving concentration.',
+//     rating: 4.3,
+//     inStock: true
+//   },
+//   {
+//     id: 3,
+//     name: 'Gioly Powder',
+//     price: 220,
+//     image: 'https://images.pexels.com/photos/6942823/pexels-photo-6942823.jpeg?auto=compress&cs=tinysrgb&w=600',
+//     brand: 'Punarvasu',
+//     description: 'Supports digestive health and detoxification.',
+//     rating: 4.7,
+//     inStock: true
+//   },
+//   {
+//     id: 4,
+//     name: 'Shankhpushpi Syrup',
+//     price: 180,
+//     image: 'https://images.pexels.com/photos/8989497/pexels-photo-8989497.jpeg?auto=compress&cs=tinysrgb&w=600',
+//     brand: 'Unjha',
+//     description: 'Enhances memory and cognitive functions.',
+//     rating: 4.2,
+//     inStock: true
+//   }
+// ];
 
 const Home: React.FC = () => {
   return (
@@ -113,7 +113,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 bg-white">
+      {/* <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold">Featured Products</h2>
@@ -128,7 +128,7 @@ const Home: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Featured Brands */}
       <FeaturedBrands />

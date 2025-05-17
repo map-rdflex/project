@@ -607,12 +607,11 @@ app.post('/api/payment/verify', authenticateToken, async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,  // aapka gmail address
-    pass: process.env.EMAIL_PASS,  // gmail app password ya normal password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-// Helper function: User ko order confirmation email bhejna
 const sendOrderConfirmationMail = async (userEmail, orderDetails) => {
   const mailOptions = {
     from: `"Ayurvedic Store" <${process.env.EMAIL_USER}>`,

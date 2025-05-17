@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { API_BASE_URL } from '../api'; // adjust the path if needed
+import { API_BASE_URL } from '../../api'; // adjust path based on your file location
+
 
 interface Product {
   name: string;

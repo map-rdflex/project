@@ -4,6 +4,7 @@ import { Package, ChevronRight, Calendar, DollarSign } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../api'; // adjust the path based on the file location
 
 interface Product {
   id: number;
@@ -45,7 +46,7 @@ const OrderHistory: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/orders', {
+        const response = await axios.get(`${API_BASE_URL}/api/orders`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

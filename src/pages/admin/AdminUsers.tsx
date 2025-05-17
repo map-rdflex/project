@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../api'; // make sure the path is correct
+
 
 interface User {
     id: number;
@@ -20,7 +22,7 @@ const AdminUsers: React.FC = () => {
             setError(null); // Clear any previous error
 
             try {
-                const response = await axios.get('http://localhost:5000/api/users');
+                const response = await axios.get(`${API_BASE_URL}/api/users`);
                 setUsers(response.data); // Update state with fetched data
             } catch (err: any) {
                 console.error('Error fetching users:', err);
@@ -85,7 +87,7 @@ const AdminUsers: React.FC = () => {
 
     function handleEdit(id: number) {
         // Logic to navigate to edit user page, for example:
-        // navigate(`/admin/users/edit/${id}`);
+        // navigate(`/ admin / users / edit / ${ id }`);
     }
 
     function handleDelete(id: number) {

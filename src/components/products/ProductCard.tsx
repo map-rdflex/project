@@ -1,9 +1,7 @@
-// src/components/products/ProductCard.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { API_BASE_URL } from '../../api';  // Add this line
 
 interface Product {
   id: number;
@@ -20,6 +18,7 @@ interface ProductCardProps {
   product: Product;
 }
 
+
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
 
@@ -34,6 +33,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     });
   };
 
+
   return (
     <Link
       to={`/products/${product.id}`}
@@ -46,12 +46,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               product.image && product.image.startsWith('http')
                 ? product.image
                 : product.image
-                  ? `${API_BASE_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+                  ? `http://localhost:5000${product.image.startsWith('/') ? '' : '/'}${product.image}`
                   : '/default-image.png'
             }
             alt={product.name}
             className="w-full h-full object-contain"
           />
+
+
+
+
+
+
         </div>
 
         <button

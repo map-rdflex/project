@@ -5,6 +5,8 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { API_BASE_URL } from '../api'; // adjust the path based on the file location
+
 
 interface ShippingDetails {
   fullName: string;
@@ -78,7 +80,7 @@ const Checkout: React.FC = () => {
       }
 
       const response = await axios.post(
-        'http://localhost:5000/api/payment/create-order',
+        `${API_BASE_URL}/api/payment/create-order`,
         { amount: totalPrice },
         {
           headers: {
@@ -111,7 +113,7 @@ const Checkout: React.FC = () => {
             );
 
             const orderResponse = await axios.post(
-              'http://localhost:5000/api/orders',
+              `${API_BASE_URL}/api/orders`,
               {
                 items: cart,
                 shippingAddress: shippingDetails,
@@ -159,7 +161,7 @@ const Checkout: React.FC = () => {
   // ✅ New: Send order data to admin via email
   const handleSendToAdmin = async () => {
     try {
-      await axios.post('http://localhost:5000/api/notify/admin', {
+      await axios.post(`${API_BASE_URL}/api/notify/admin`, {
         shippingDetails: {
           fullName: shippingDetails.fullName,
           address: shippingDetails.address,

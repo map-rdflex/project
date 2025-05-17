@@ -4,6 +4,8 @@ import { Plus, Search, Edit, Trash2, Filter, ArrowUpDown } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../../api'; // adjust path based on your file location
+
 
 interface Product {
   id: number;
@@ -23,7 +25,7 @@ const AdminProducts: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products');
+        const response = await axios.get(`${API_BASE_URL}/api/products`);
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -40,7 +42,7 @@ const AdminProducts: React.FC = () => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(products.filter(product => product.id !== id));

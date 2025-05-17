@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../api'; // adjust the path if needed
 
 interface Product {
   name: string;
@@ -28,7 +29,7 @@ const AdminEditProduct: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
         setProduct(response.data);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -67,7 +68,7 @@ const AdminEditProduct: React.FC = () => {
         formData.append('image', imageFile);
       }
 
-      await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+      await axios.put(`${API_BASE_URL}/api/products/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

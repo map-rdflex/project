@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { API_BASE_URL } from '../../api'; // adjust path based on your file location
+
 
 interface Product {
   id: number;
@@ -46,7 +48,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               product.image && product.image.startsWith('http')
                 ? product.image
                 : product.image
-                  ? `http://localhost:5000${product.image.startsWith('/') ? '' : '/'}${product.image}`
+                  ? `${API_BASE_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+
                   : '/default-image.png'
             }
             alt={product.name}

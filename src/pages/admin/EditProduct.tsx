@@ -134,7 +134,8 @@ const AdminEditProduct: React.FC = () => {
               src={
                 product.image.startsWith('http')
                   ? product.image
-                  : `http://localhost:5000${product.image.startsWith('/') ? '' : '/'}${product.image}`
+                  : `${API_BASE_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+
               }
               alt={product.name}
               className="w-48 h-48 object-contain border rounded mb-2"

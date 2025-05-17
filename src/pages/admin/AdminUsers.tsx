@@ -95,7 +95,8 @@ const AdminUsers: React.FC = () => {
         // Logic to delete user
         if (window.confirm('Are you sure you want to delete this user?')) {
             axios
-                .delete(`http://localhost:5000/api/users/${id}`) // Replace with your API endpoint
+                .delete(`${API_BASE_URL}/api/users/${id}`)
+                // Replace with your API endpoint
                 .then(() => {
                     setUsers(users.filter((user) => user.id !== id)); // Update the users state after deletion
                 })

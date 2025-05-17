@@ -23,7 +23,7 @@ const ProductDetail = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/products/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
 
         if (response.ok) {
           const data = await response.json();
@@ -142,12 +142,10 @@ const ProductDetail = () => {
                   src={
                     product.image.startsWith('http')
                       ? product.image
-                      : `http://localhost:5000${product.image}`
+                      : `${API_BASE_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
                   }
                   alt={product.name}
                   className="max-h-full max-w-full object-contain"
-
-
                 />
               ) : (
                 <div className="bg-gray-100 h-96 w-full flex items-center justify-center">

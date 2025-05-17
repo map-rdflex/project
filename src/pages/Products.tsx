@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/products/ProductCard';
+import { API_BASE_URL } from '../api';  // path apne project ke hisaab se set karo
+
 
 
 function Products() {
@@ -16,7 +18,7 @@ function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/products');
+        const response = await fetch(`${API_BASE_URL}/api/products`);
         if (response.ok) {
           const data = await response.json();
           setProducts(data);

@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+
 import { API_BASE_URL } from '../api'; // adjust the path based on the file location
 
 
@@ -99,7 +100,7 @@ const Checkout: React.FC = () => {
         handler: async function (response: any) {
           try {
             await axios.post(
-              'http://localhost:5000/api/payment/verify',
+              `${API_BASE_URL}/api/payment/verify`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,

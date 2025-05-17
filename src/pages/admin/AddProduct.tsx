@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../../api';
+
+// path apne project ke hisaab se set karo
+
 
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState('');
@@ -31,7 +35,9 @@ const AdminAddProduct: React.FC = () => {
       formData.append('inStock', inStock.toString());
       if (image) formData.append('image', image);
 
-      const response = await fetch('http://localhost:5000/api/products', {
+      const response = await fetch(`${API_BASE_URL}/api/products`, {
+
+
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

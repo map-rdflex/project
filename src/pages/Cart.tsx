@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Minus, Plus, X, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { API_BASE_URL } from '../api';  // sahi path set karo
+
 
 const Cart: React.FC = () => {
   const { cart, updateQuantity, removeFromCart, totalPrice } = useCart();
@@ -82,7 +84,7 @@ const Cart: React.FC = () => {
                   <div className="hidden md:flex md:col-span-6 items-center">
                     <div className="w-16 h-16 rounded-md overflow-hidden bg-neutral-100 flex-shrink-0">
                       <img
-                        src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`}
+                        src={item.image.startsWith('http') ? item.image : `${API_BASE_URL}${item.image.startsWith('/') ? '' : '/'}${item.image}`}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../api'; // adjust path based on your file location
+
 
 interface OrderItem {
   id: number;
@@ -36,7 +38,7 @@ const AdminOrders: React.FC = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:5000/api/orders', {
+        const response = await fetch(`${API_BASE_URL}/api/orders`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`, // Make sure this is included

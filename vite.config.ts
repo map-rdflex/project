@@ -7,11 +7,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',  // explicitly tell Vite to output to dist
   },
-  server: {
-    proxy: {
-      '/api': 'http://localhost:5000',
-    },
-  },
+  // server: {
+  //   proxy: {
+  //     '/api': 'http://localhost:5000',
+  //   },
+  // },
   optimizeDeps: {
     exclude: ['lucide-react'],
   },

@@ -142,7 +142,7 @@ const AdminProducts: React.FC = () => {
                           <div className="h-10 w-10 rounded-md bg-neutral-100 overflow-hidden flex-shrink-0">
                             {product.image && (
                               <img
-                                src={product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`}
+                                src={product.image.startsWith('http') ? product.image : `${API_BASE_URL}${product.image}`}
                                 alt={product.name}
                                 className="w-full h-full object-cover"
                               />

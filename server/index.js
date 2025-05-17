@@ -809,3 +809,4 @@ const startServer = async () => {
 };
 
 startServer();
+// start the server

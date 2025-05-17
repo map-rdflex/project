@@ -62,7 +62,7 @@ const sequelize = new Sequelize({
     }
   }
 });
-
+// test
 
 // Initialize Razorpay (Test mode)
 const razorpay = new Razorpay({

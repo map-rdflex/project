@@ -81,7 +81,12 @@ const Cart: React.FC = () => {
                   {/* Desktop Layout */}
                   <div className="hidden md:flex md:col-span-6 items-center">
                     <div className="w-16 h-16 rounded-md overflow-hidden bg-neutral-100 flex-shrink-0">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <img
+                        src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+
                     </div>
                     <div className="ml-4">
                       <h3 className="font-medium text-neutral-800">{item.name}</h3>

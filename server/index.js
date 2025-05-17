@@ -8,8 +8,16 @@ import path from 'path';
 import multer from 'multer';
 import Razorpay from 'razorpay';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import nodemailer from 'nodemailer';
+
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 
 // Initialize Express app
 const app = express();
@@ -27,6 +35,16 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../public/uploads'));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
 
 // Set up Sequelize with PostgreSQL
 const sequelize = new Sequelize({
@@ -169,14 +187,7 @@ OrderItem.belongsTo(Product);
 
 
 // File upload configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../public/uploads'));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
+
 
 const upload = multer({ storage });
 
@@ -450,7 +461,6 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
 });
 
 // GET /api/orders
-// GET /api/orders
 app.get('/api/orders', authenticateToken, async (req, res) => {
   try {
     const orders = await Order.findAll({
@@ -467,12 +477,25 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
       order: [['createdAt', 'DESC']]
     });
 
-    res.json(orders);
+    // Parse shippingAddress if stored as string
+    const parsedOrders = orders.map(order => {
+      let shippingAddress = order.shippingAddress;
+      if (typeof shippingAddress === 'string') {
+        shippingAddress = JSON.parse(shippingAddress);
+      }
+      return {
+        ...order.toJSON(),
+        shippingAddress
+      };
+    });
+
+    res.json(parsedOrders);
   } catch (error) {
     console.error('Error fetching admin orders:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 app.get('/api/users', authenticateToken, async (req, res) => {
   try {
@@ -555,6 +578,7 @@ app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
   }
 });
 
+
 app.post('/api/payment/verify', authenticateToken, async (req, res) => {
   try {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
@@ -580,8 +604,103 @@ app.post('/api/payment/verify', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,  // aapka gmail address
+    pass: process.env.EMAIL_PASS,  // gmail app password ya normal password
+  },
+});
 
-// Sync Database and Start Server
+// Helper function: User ko order confirmation email bhejna
+const sendOrderConfirmationMail = async (userEmail, orderDetails) => {
+  const mailOptions = {
+    from: `"Ayurvedic Store" <${process.env.EMAIL_USER}>`,
+    to: userEmail,
+    subject: 'Order Confirmation',
+    html: `
+      <h3>Thank you for your order!</h3>
+      <p>Your order for <strong>${orderDetails.product.name}</strong> (Qty: ${orderDetails.quantity}) has been received.</p>
+      <p>Status: ${orderDetails.status}</p>
+      <p>Total: ₹${orderDetails.product.price * orderDetails.quantity}</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Order confirmation email sent to', userEmail);
+  } catch (error) {
+    console.error('Error sending order confirmation email:', error);
+  }
+};
+
+// Route: Admin ko notify karna (order details email)
+app.post('/api/notify/admin', async (req, res) => {
+  const { shippingDetails, items, total } = req.body;
+
+  const mailOptions = {
+    from: `"Ayurvedic Store" <${process.env.EMAIL_USER}>`,
+    to: process.env.EMAIL_USER,
+    subject: 'New Order Notification',
+    html: `
+    <div style="font-family: Arial, sans-serif; color: #333;">
+      <h2 style="color: #007BFF;">New Order Received</h2>
+      
+      <h3>Shipping Details</h3>
+      <p><strong>Name:</strong> ${shippingDetails.fullName || 'N/A'}</p>
+      <p><strong>Address:</strong> ${shippingDetails.address || ''}, ${shippingDetails.city || ''}, ${shippingDetails.state || ''} - ${shippingDetails.postalCode || ''}</p>
+      <p><strong>Phone:</strong> ${shippingDetails.phone || 'N/A'}</p>
+      
+      <h3>Ordered Items</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background-color: #f2f2f2;">
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Product</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Quantity</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Price (₹)</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(item => `
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px;">${item.name}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.quantity}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.price.toFixed(2)}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${(item.price * item.quantity).toFixed(2)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      
+      <h3 style="text-align: right; margin-top: 20px;">
+        Total Amount: <span style="color: #007BFF;">₹${total.toFixed(2)}</span>
+      </h3>
+    </div>
+  `,
+  };
+
+
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Mail sent: ", info.response);
+
+    // Optional: User ko bhi order confirmation bhejna
+    if (shippingDetails.email && items.length > 0) {
+      // For simplicity, send confirmation for first item only
+      await sendOrderConfirmationMail(shippingDetails.email, {
+        product: items[0].product || { name: 'Product', price: items[0].price || 0 },
+        quantity: items[0].quantity || 1,
+        status: 'Received',
+      });
+    }
+
+    res.json({ message: 'Email sent to admin and user (if email present)' });
+  } catch (error) {
+    console.error("Mail send error: ", error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+});
 const startServer = async () => {
   try {
     await sequelize.sync({ alter: true });

@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.344.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.3",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "razorpay": "^2.9.2",

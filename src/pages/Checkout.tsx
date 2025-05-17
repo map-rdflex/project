@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, User, Home, Truck, Shield } from 'lucide-react';
+import { CreditCard, Truck, Shield } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -77,7 +77,6 @@ const Checkout: React.FC = () => {
         return;
       }
 
-      // Create Razorpay order
       const response = await axios.post(
         'http://localhost:5000/api/payment/create-order',
         { amount: totalPrice },
@@ -89,7 +88,7 @@ const Checkout: React.FC = () => {
       );
 
       const options = {
-        key: 'rzp_test_nX5UDu5A20ff2J', // Replace with your actual Razorpay key ID
+        key: 'rzp_test_nX5UDu5A20ff2J',
         amount: response.data.amount,
         currency: response.data.currency,
         name: 'Shri Ayu Wellness',
@@ -97,7 +96,6 @@ const Checkout: React.FC = () => {
         order_id: response.data.id,
         handler: async function (response: any) {
           try {
-            // Verify payment
             await axios.post(
               'http://localhost:5000/api/payment/verify',
               {
@@ -112,7 +110,6 @@ const Checkout: React.FC = () => {
               }
             );
 
-            // Create order
             const orderResponse = await axios.post(
               'http://localhost:5000/api/orders',
               {
@@ -127,13 +124,12 @@ const Checkout: React.FC = () => {
               }
             );
 
-            // Clear cart and redirect to success page
             clearCart();
-            navigate('/order-success', { 
-              state: { 
+            navigate('/order-success', {
+              state: {
                 orderId: orderResponse.data.id,
-                paymentId: response.razorpay_payment_id 
-              } 
+                paymentId: response.razorpay_payment_id
+              }
             });
           } catch (error) {
             console.error('Order creation error:', error);
@@ -150,7 +146,6 @@ const Checkout: React.FC = () => {
         }
       };
 
-      // Open Razorpay payment form
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
     } catch (error) {
@@ -161,13 +156,38 @@ const Checkout: React.FC = () => {
     }
   };
 
+  // ✅ New: Send order data to admin via email
+  const handleSendToAdmin = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/notify/admin', {
+        shippingDetails: {
+          fullName: shippingDetails.fullName,
+          address: shippingDetails.address,
+          city: shippingDetails.city,
+          state: shippingDetails.state,
+          postalCode: shippingDetails.postalCode,
+          phone: shippingDetails.phone,
+        },
+        items: cart.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        total: totalPrice,
+      });
+      toast.success('Details sent to admin successfully!');
+    } catch (err) {
+      console.error('Email error:', err);
+      toast.error('Failed to send email to admin');
+    }
+  };
+
   return (
     <div className="container-custom py-8 md:py-12">
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      
+
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Shipping and Payment Form */}
           <div className="lg:col-span-2 space-y-8">
             {/* Shipping Details */}
             <div className="bg-white rounded-lg shadow-soft overflow-hidden">
@@ -175,7 +195,7 @@ const Checkout: React.FC = () => {
                 <Truck className="text-primary-600 mr-2" size={20} />
                 <h2 className="text-lg font-semibold">Shipping Details</h2>
               </div>
-              
+
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -192,7 +212,7 @@ const Checkout: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-neutral-700 mb-1">
                       Phone Number
@@ -208,7 +228,7 @@ const Checkout: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label htmlFor="address" className="block text-sm font-medium text-neutral-700 mb-1">
                     Address
@@ -223,7 +243,7 @@ const Checkout: React.FC = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="city" className="block text-sm font-medium text-neutral-700 mb-1">
@@ -239,7 +259,7 @@ const Checkout: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="state" className="block text-sm font-medium text-neutral-700 mb-1">
                       State
@@ -254,7 +274,7 @@ const Checkout: React.FC = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="postalCode" className="block text-sm font-medium text-neutral-700 mb-1">
                       Postal Code
@@ -272,14 +292,14 @@ const Checkout: React.FC = () => {
                 </div>
               </div>
             </div>
-            
-            {/* Payment Details */}
+
+            {/* Payment Info */}
             <div className="bg-white rounded-lg shadow-soft overflow-hidden">
               <div className="p-4 bg-primary-50 flex items-center border-b border-primary-100">
                 <CreditCard className="text-primary-600 mr-2" size={20} />
                 <h2 className="text-lg font-semibold">Payment Details</h2>
               </div>
-              
+
               <div className="p-6">
                 <div className="bg-secondary-50 border border-secondary-100 rounded-md p-4 mb-6">
                   <div className="flex items-start">
@@ -289,16 +309,16 @@ const Checkout: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                
-                <div className="space-y-4">
-                  <p className="text-center text-neutral-600">
+
+                <div className="space-y-4 text-center">
+                  <p className="text-neutral-600">
                     Click "Complete Order" to proceed to the Razorpay payment gateway
                   </p>
-                  
+
                   <div className="flex justify-center">
-                    <img 
-                      src="https://www.razorpay.com/assets/razorpay-glyph.svg" 
-                      alt="Razorpay" 
+                    <img
+                      src="https://www.razorpay.com/assets/razorpay-glyph.svg"
+                      alt="Razorpay"
                       className="h-8"
                     />
                   </div>
@@ -306,12 +326,12 @@ const Checkout: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-soft p-6 sticky top-24">
               <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-              
+
               <div className="divide-y divide-neutral-200">
                 {cart.map((item) => (
                   <div key={item.id} className="py-3 flex justify-between">
@@ -323,7 +343,7 @@ const Checkout: React.FC = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="border-t border-neutral-200 pt-4 mt-4 space-y-3">
                 <div className="flex justify-between">
                   <span className="text-neutral-600">Subtotal</span>
@@ -344,23 +364,23 @@ const Checkout: React.FC = () => {
                   </div>
                 </div>
               </div>
-              
-              <button 
+
+              {/* Submit Order Button */}
+              <button
                 type="submit"
                 disabled={loading}
                 className="btn-primary w-full mt-6"
               >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : (
-                  'Complete Order'
-                )}
+                {loading ? 'Processing...' : 'Complete Order'}
+              </button>
+
+              {/* ✅ Extra Button: Send Info to Admin */}
+              <button
+                type="button"
+                onClick={handleSendToAdmin}
+                className="btn-secondary w-full mt-3"
+              >
+                Send Info to Admin
               </button>
             </div>
           </div>

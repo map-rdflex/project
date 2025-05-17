@@ -2,56 +2,55 @@ import React, { useState } from 'react';
 
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState('');
-  const [price, setPrice] = useState<number>(0);
-  const [category, setCategory] = useState('');
+  const [price, setPrice] = useState<string>('');
   const [brand, setBrand] = useState('');
+  const [description, setDescription] = useState('');
+  // const [rating, setRating] = useState<string>('');
   const [inStock, setInStock] = useState<boolean>(true);
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // Fetch the token from localStorage
     const token = localStorage.getItem('token');
-
     if (!token) {
       alert('No authentication token found. Please log in first.');
       setLoading(false);
       return;
     }
 
-    const newProduct = {
-      name: productName,
-      price,
-      category,
-      brand,
-      inStock,
-      image
-    };
-
     try {
+      const formData = new FormData();
+      formData.append('name', productName);
+      formData.append('price', price.toString());
+      formData.append('brand', brand);
+      formData.append('description', description);
+      // formData.append('rating', rating.toString());
+      formData.append('inStock', inStock.toString());
+      if (image) formData.append('image', image);
+
       const response = await fetch('http://localhost:5000/api/products', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,  // Pass the token here
+          Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
-        body: JSON.stringify(newProduct),
+        body: formData,
       });
 
       if (response.ok) {
         alert('Product added successfully!');
         setProductName('');
-        setPrice(0);
-        setCategory('');
+        setPrice('');
         setBrand('');
+        setDescription('');
+        // setRating('');
         setInStock(true);
-        setImage('');
+        setImage(null);
       } else {
-        const errorResponse = await response.json(); // Assuming the backend returns an error message
+        const errorResponse = await response.json();
         console.error('Error adding product:', errorResponse);
         alert(`Failed to add product: ${errorResponse.message || 'Unknown error'}`);
       }
@@ -59,7 +58,7 @@ const AdminAddProduct: React.FC = () => {
       console.error('Error adding product:', error);
       const message =
         error?.message ||
-        error?.response?.data?.message || // axios-like response
+        error?.response?.data?.message ||
         'Unknown error';
       alert(`An error occurred: ${message}`);
     } finally {
@@ -87,20 +86,9 @@ const AdminAddProduct: React.FC = () => {
           <input
             type="number"
             value={price}
-            onChange={(e) => setPrice(Number(e.target.value))}
+            onChange={(e) => setPrice(e.target.value)}
             required
             min="0"
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Category</label>
-          <input
-            type="text"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
           />
         </div>
@@ -117,23 +105,53 @@ const AdminAddProduct: React.FC = () => {
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+            rows={3}
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+          ></textarea>
+        </div>
+
+        {/* <div>
+          <label className="block text-sm font-medium text-gray-700">Rating (1 to 5)</label>
+          <input
+            type="number"
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+            required
+            min="1"
+            max="5"
+            step="0.1"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+          />
+        </div> */}
+
+        <div>
           <label className="block text-sm font-medium text-gray-700">Stock Status</label>
           <select
             value={inStock ? 'inStock' : 'outOfStock'}
             onChange={(e) => setInStock(e.target.value === 'inStock')}
             required
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md">
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
+          >
             <option value="inStock">In Stock</option>
             <option value="outOfStock">Out of Stock</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Image URL</label>
+          <label className="block text-sm font-medium text-gray-700">Product Image</label>
           <input
-            type="url"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) setImage(file);
+            }}
+            required
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
           />
         </div>

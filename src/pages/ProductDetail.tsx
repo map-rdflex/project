@@ -142,7 +142,9 @@ const ProductDetail = () => {
                       : `http://localhost:5000${product.image}`
                   }
                   alt={product.name}
-                  className="w-full h-96 object-cover"
+                  className="max-h-full max-w-full object-contain"
+
+
                 />
               ) : (
                 <div className="bg-gray-100 h-96 w-full flex items-center justify-center">

@@ -10,7 +10,6 @@ interface Product {
   name: string;
   price: number;
   brand: string;
-  category: string;
   image: string;
   inStock: boolean;
 }
@@ -52,13 +51,14 @@ const AdminProducts: React.FC = () => {
     }
   };
 
+  // Filter products by name or brand only
+  const filteredProducts = products.filter(product => {
+    const name = product.name?.toLowerCase() || '';
+    const brand = product.brand?.toLowerCase() || '';
+    const term = searchTerm.toLowerCase();
 
-
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    return name.includes(term) || brand.includes(term);
+  });
 
   return (
     <div className="space-y-6">
@@ -112,9 +112,6 @@ const AdminProducts: React.FC = () => {
                     Product
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                     Brand
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -131,7 +128,7 @@ const AdminProducts: React.FC = () => {
               <tbody className="bg-white divide-y divide-neutral-200">
                 {filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-neutral-500">
+                    <td colSpan={5} className="px-6 py-4 text-center text-neutral-500">
                       No products found
                     </td>
                   </tr>
@@ -154,9 +151,6 @@ const AdminProducts: React.FC = () => {
                             <div className="text-sm text-neutral-500">ID: {product.id}</div>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">
-                        {product.category || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">
                         {product.brand}

@@ -18,6 +18,7 @@ interface ProductCardProps {
   product: Product;
 }
 
+
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
 
@@ -32,6 +33,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     });
   };
 
+
   return (
     <Link
       to={`/products/${product.id}`}
@@ -44,12 +46,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               product.image && product.image.startsWith('http')
                 ? product.image
                 : product.image
-                  ? `http://localhost:5000${product.image}`
-                  : '/default-image.png'  // ya koi default placeholder image
+                  ? `http://localhost:5000${product.image.startsWith('/') ? '' : '/'}${product.image}`
+                  : '/default-image.png'
             }
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain"
           />
+
+
+
+
+
 
         </div>
 

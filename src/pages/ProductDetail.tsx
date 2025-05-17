@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // or your correct path
+import axios from 'axios';
+import { API_BASE_URL } from '../api'; // correct path adjust karna padega based on file location
 
 
 
@@ -13,6 +15,7 @@ const ProductDetail = () => {
   const [addingToCart, setAddingToCart] = useState<boolean>(false);
   const [cartMessage, setCartMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const { addToCart } = useCart(); // adjust based on your implementation
+
 
 
 

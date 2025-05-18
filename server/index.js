@@ -24,7 +24,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: 'https://project-pi-eight-76.vercel.app/', // ✅ Use your actual frontend URL here
+  origin: 'https://project-pi-eight-76.vercel.app', // ✅ Use your actual frontend URL here
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Authorization', 'Content-Type'],
   credentials: true,

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext'; // or your correct path
-import axios from 'axios';
 import { API_BASE_URL } from '../api'; // correct path adjust karna padega based on file location
+import axios from 'axios';
 
 
 
@@ -23,16 +23,10 @@ const ProductDetail = () => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
-
-        if (response.ok) {
-          const data = await response.json();
-          setProduct(data);
-        } else {
-          setError('Failed to fetch product details');
-        }
-      } catch (error) {
-        setError('An error occurred while fetching product details');
+        const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
+        setProduct(response.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'An error occurred while fetching product details');
       } finally {
         setLoading(false);
       }
@@ -42,6 +36,7 @@ const ProductDetail = () => {
       fetchProductDetail();
     }
   }, [id]);
+
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);

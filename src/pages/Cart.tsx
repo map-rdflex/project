@@ -84,10 +84,15 @@ const Cart: React.FC = () => {
                   <div className="hidden md:flex md:col-span-6 items-center">
                     <div className="w-16 h-16 rounded-md overflow-hidden bg-neutral-100 flex-shrink-0">
                       <img
-                        src={item.image.startsWith('http') ? item.image : `${API_BASE_URL}${item.image.startsWith('/') ? '' : '/'}${item.image}`}
+                        src={
+                          item.image && item.image.startsWith('http')
+                            ? item.image
+                            : `${API_BASE_URL}${item.image && item.image.startsWith('/') ? '' : '/'}${item.image || ''}`
+                        }
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
+
 
                     </div>
                     <div className="ml-4">

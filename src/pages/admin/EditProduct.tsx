@@ -30,7 +30,11 @@ const AdminEditProduct: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/products/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setProduct(response.data);
       } catch (error) {
         console.error('Error fetching product:', error);

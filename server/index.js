@@ -23,14 +23,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors({
-  origin: '*',
+  origin: 'https://project-pi-eight-76.vercel.app/', // ✅ Use your actual frontend URL here
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Authorization', 'Content-Type'],
   credentials: true,
 }));
-
 
 
 app.use(express.json());

@@ -82,15 +82,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="text-primary-400 mr-2 mt-1" size={18} />
-                <span className="text-neutral-300">123 Ayurveda Street, Wellness City, India 400001</span>
+                <span className="text-neutral-300">D/204 Adishwar Nagar Naroda, Ahmedabad - 382330</span>
               </li>
               <li className="flex items-center">
                 <Phone className="text-primary-400 mr-2" size={18} />
-                <span className="text-neutral-300">+91 1234567890</span>
+                <span className="text-neutral-300">+91 7573051360</span>
               </li>
               <li className="flex items-center">
                 <Mail className="text-primary-400 mr-2" size={18} />
-                <span className="text-neutral-300">info@shriayu.com</span>
+                <span className="text-neutral-300">malavparekh97@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -103,9 +103,9 @@ const Footer: React.FC = () => {
             &copy; {new Date().getFullYear()} Shri Ayu Wellness. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0">
-            <img 
-              src="https://www.razorpay.com/assets/razorpay-glyph.svg" 
-              alt="Razorpay" 
+            <img
+              src="https://www.razorpay.com/assets/razorpay-glyph.svg"
+              alt="Razorpay"
               className="h-8 inline-block mr-2"
             />
             <span className="text-neutral-400 text-sm">Secure Payments by Razorpay</span>

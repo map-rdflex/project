@@ -10,6 +10,8 @@ import Razorpay from 'razorpay';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import nodemailer from 'nodemailer';
+import { v2 as cloudinary } from 'cloudinary';
+
 
 
 dotenv.config();
@@ -19,7 +21,6 @@ const __dirname = path.dirname(__filename);
 
 
 // Cloudinary config
-const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 cloudinary.config({

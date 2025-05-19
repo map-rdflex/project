@@ -405,15 +405,16 @@ app.post('/api/products', authenticateToken, isAdmin, cloudupload.single('image'
       price: parseFloat(price),
       brand,
       category,
-      image: req.file?.path || null  // Cloudinary se aane wala URL yaha save hoga
+      image: req.file?.path || null,  // Cloudinary URL
     });
 
     res.status(201).json(product);
   } catch (error) {
-    console.error('Create product error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Create product error:', error);  // Log full error here
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
 
 
 app.put('/api/products/:id', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {

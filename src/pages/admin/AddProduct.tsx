@@ -31,13 +31,10 @@ const AdminAddProduct: React.FC = () => {
       formData.append('price', price.toString());
       formData.append('brand', brand);
       formData.append('description', description);
-      // formData.append('rating', rating.toString());
       formData.append('inStock', inStock.toString());
       if (image) formData.append('image', image);
 
       const response = await fetch(`${API_BASE_URL}/api/products`, {
-
-
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -46,27 +43,32 @@ const AdminAddProduct: React.FC = () => {
         body: formData,
       });
 
+      const contentType = response.headers.get('content-type');
+      let responseData: any = null;
+
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response from server:', text);
+        throw new Error('Server returned unexpected response (non-JSON)');
+      }
+
       if (response.ok) {
         alert('Product added successfully!');
         setProductName('');
         setPrice('');
         setBrand('');
         setDescription('');
-        // setRating('');
         setInStock(true);
         setImage(null);
       } else {
-        const errorResponse = await response.json();
-        console.error('Error adding product:', errorResponse);
-        alert(`Failed to add product: ${errorResponse.message || 'Unknown error'}`);
+        console.error('Server error response:', responseData);
+        alert(`Failed to add product: ${responseData.message || 'Unknown error'}`);
       }
     } catch (error: any) {
-      console.error('Error adding product:', error);
-      const message =
-        error?.message ||
-        error?.response?.data?.message ||
-        'Unknown error';
-      alert(`An error occurred: ${message}`);
+      console.error('Client error while adding product:', error);
+      alert(`An error occurred: ${error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }

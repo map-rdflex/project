@@ -399,21 +399,25 @@ app.post('/api/products', authenticateToken, isAdmin, cloudupload.single('image'
   try {
     const { name, description, price, brand, category } = req.body;
 
+    console.log('Received Data:', req.body);
+    console.log('Uploaded File:', req.file);
+
     const product = await Product.create({
       name,
       description,
       price: parseFloat(price),
       brand,
       category,
-      image: req.file?.path || null,  // Cloudinary URL
+      image: req.file?.path || null
     });
 
-    res.status(201).json(product);
+    return res.status(201).json(product);
   } catch (error) {
-    console.error('Create product error:', error);  // Log full error here
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('❌ Error creating product:', error); // 🔥 Log real error
+    return res.status(500).json({ message: 'Server error', error: error.message }); // Send JSON instead of crashing
   }
 });
+
 
 
 

@@ -497,6 +497,7 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
 app.get('/api/orders', authenticateToken, async (req, res) => {
   try {
     const orders = await Order.findAll({
+      where: { userId: req.user.id },   // <--- add this filter
       include: [
         {
           model: User,

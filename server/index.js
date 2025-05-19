@@ -21,7 +21,6 @@ const __dirname = path.dirname(__filename);
 // Cloudinary config
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const multer = require('multer');
 
 cloudinary.config({
   cloud_name: 'dvk19etxc',          // apna actual cloud name yahan daal

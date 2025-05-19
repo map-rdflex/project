@@ -12,29 +12,74 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
-  
+
+  // Validation functions
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string): boolean => {
+    return password.length >= 6;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Enhanced validation
+    if (!validateEmail(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
+      // Try to register the user
       await register(username, email, password);
-      toast.success('Registration successful');
-      navigate('/');
+
+      // Show success message
+      toast.success('Registration successful! Redirecting to home page...');
+
+      // Redirect after a short delay to allow the toast to be seen
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
+
+      // Extract and display the error message
+      let errorMessage = 'Registration failed. Please try again.';
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      // Show more specific errors based on common registration issues
+      if (errorMessage.toLowerCase().includes('email') && errorMessage.toLowerCase().includes('exist')) {
+        errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+      } else if (errorMessage.toLowerCase().includes('username') && errorMessage.toLowerCase().includes('exist')) {
+        errorMessage = 'This username is already taken. Please choose a different username.';
+      }
+
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-neutral-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-soft">
@@ -49,7 +94,7 @@ const Register: React.FC = () => {
             Join Shri Ayu Wellness to explore Ayurvedic products
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
@@ -68,12 +113,12 @@ const Register: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="form-input pl-10"
+                  className="form-input pl-10 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Username"
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
                 Email address
@@ -90,12 +135,12 @@ const Register: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="form-input pl-10"
+                  className="form-input pl-10 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Email address"
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-neutral-700">
                 Password
@@ -112,13 +157,16 @@ const Register: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="form-input pl-10"
+                  className="form-input pl-10 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Password"
                   minLength={6}
                 />
               </div>
+              <p className="mt-1 text-xs text-neutral-500">
+                Must be at least 6 characters
+              </p>
             </div>
-            
+
             <div>
               <label htmlFor="confirm-password" className="block text-sm font-medium text-neutral-700">
                 Confirm Password
@@ -135,14 +183,14 @@ const Register: React.FC = () => {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="form-input pl-10"
+                  className="form-input pl-10 block w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Confirm password"
                   minLength={6}
                 />
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center">
             <input
               id="terms"
@@ -162,12 +210,12 @@ const Register: React.FC = () => {
               </a>
             </label>
           </div>
-          
+
           <div>
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full"
+              className="btn-primary w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -183,7 +231,7 @@ const Register: React.FC = () => {
             </button>
           </div>
         </form>
-        
+
         <div className="mt-4 text-center">
           <p className="text-sm text-neutral-600">
             Already have an account?{' '}

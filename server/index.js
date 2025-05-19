@@ -32,9 +32,10 @@ const cloudStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'ayurvedic-products',
-    allowed_formats: ['jpg', 'jpeg', 'png'],
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'], // ✅ added webp
   },
 });
+
 
 const cloudupload = multer({ storage: cloudStorage });
 

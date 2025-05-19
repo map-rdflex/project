@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import nodemailer from 'nodemailer';
 import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 
 
@@ -20,8 +21,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-// Cloudinary config
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 cloudinary.config({
   cloud_name: 'dvk19etxc',          // apna actual cloud name yahan daal
@@ -29,7 +28,6 @@ cloudinary.config({
   api_secret: 'Wx6_DJFooqzozRlDK4Khd66ZJ6A',  // apna actual api secret yahan daal
 });
 
-// Cloudinary storage for Multer
 const cloudStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -42,7 +40,6 @@ const cloudupload = multer({ storage: cloudStorage });
 
 
 
-// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 

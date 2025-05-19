@@ -44,17 +44,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="relative overflow-hidden">
         <div className="h-56 bg-neutral-100">
           <img
-            src={
-              product.image
-                ? product.image.startsWith('http')
-                  ? product.image
-                  : `${API_BASE_URL}${product.image.startsWith('/') ? '' : '/'}${product.image}`
-                : '/default-image.png'
-            }
+            src={product.image || '/default-image.png'}
             onError={(e) => { e.currentTarget.src = '/default-image.png'; }}
             alt={product.name}
             className="w-full h-full object-contain"
           />
+
 
 
 

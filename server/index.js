@@ -18,6 +18,29 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
+// Cloudinary config
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
+
+cloudinary.config({
+  cloud_name: 'dvk19etxc',          // apna actual cloud name yahan daal
+  api_key: '415792794645244',       // apna actual api key yahan daal
+  api_secret: 'Wx6_DJFooqzozRlDK4Khd66ZJ6A',  // apna actual api secret yahan daal
+});
+
+// Cloudinary storage for Multer
+const cloudStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'ayurvedic-products',
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+  },
+});
+
+const cloudupload = multer({ storage: cloudStorage });
+
+
 
 // Initialize Express app
 const app = express();
@@ -33,6 +56,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 const storage = multer.diskStorage({
@@ -374,7 +398,7 @@ app.get('/api/products/:id', async (req, res) => {
   }
 });
 
-app.post('/api/products', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
+app.post('/api/products', authenticateToken, isAdmin, cloudupload.single('image'), async (req, res) => {
   try {
     const { name, description, price, brand, category } = req.body;
 
@@ -384,7 +408,7 @@ app.post('/api/products', authenticateToken, isAdmin, upload.single('image'), as
       price: parseFloat(price),
       brand,
       category,
-      image: req.file ? `/uploads/${req.file.filename}` : null
+      image: req.file?.path || null  // Cloudinary se aane wala URL yaha save hoga
     });
 
     res.status(201).json(product);
@@ -393,6 +417,7 @@ app.post('/api/products', authenticateToken, isAdmin, upload.single('image'), as
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 app.put('/api/products/:id', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
   try {
